@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::get('deploy-diagnostics', \App\Http\Controllers\DeployDiagnosticsController::class)
+    ->name('deploy-diagnostics');
+
 Route::resource('', \App\Http\Controllers\HomeController::class)
     ->only(['index'])
     ->names(['index' => 'home']);
