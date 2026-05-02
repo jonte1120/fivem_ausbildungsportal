@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Throwable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -113,7 +114,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function loadSettings()
     {
-        if (!Schema::hasTable('settings')) {
+        try {
+            if (!Schema::hasTable('settings') || !DB::table('settings')->exists()) {
+                return;
+            }
+        } catch (Throwable) {
             return;
         }
 
