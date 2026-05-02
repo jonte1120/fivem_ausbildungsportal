@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -112,7 +113,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function loadSettings()
     {
-        if (!DB::table('settings')->exists()) {
+        if (!Schema::hasTable('settings')) {
             return;
         }
 
