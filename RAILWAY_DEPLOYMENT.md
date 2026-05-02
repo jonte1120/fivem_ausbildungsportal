@@ -28,6 +28,8 @@ APP_FAKER_LOCALE=de_DE
 
 APP_KEY=
 
+RAILPACK_PHP_EXTENSIONS=zip,pdo_pgsql,pgsql
+
 DB_CONNECTION=pgsql
 DB_URL=${{Postgres.DATABASE_URL}}
 
