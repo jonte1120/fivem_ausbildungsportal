@@ -1,0 +1,33 @@
+<?php
+
+namespace {{ namespace }};
+
+{{ factoryImport }}
+use App\Models\BaseModel;
+use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+
+class {{ class }} extends BaseModel
+{
+	protected $table = '';
+
+	protected $primaryKey = '';
+
+    protected $guarded = ['*'];
+
+	#########################
+	# CUSTOM FUNCTIONS
+	#########################
+
+	#########################
+	# SCOPES
+	#########################
+
+	#########################
+	# RELATIONS
+	#########################
+
+	#########################
+	# ACCESSORS & MUTATORS
+	#########################
+}

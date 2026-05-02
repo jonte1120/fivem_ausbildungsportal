@@ -1,0 +1,112 @@
+<?php
+
+namespace App\Http\Controllers\Administration;
+
+use App\Facades\Alert;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Administration\Fractions\CreateRequest;
+use App\Models\Fraction;
+use App\Models\User\Fraction as UserFraction;
+use Illuminate\Http\Request;
+
+class FractionsController extends Controller
+{
+    /**
+     * Anzeige der Fraktionen
+     *
+     * @return mixed
+     */
+    public function index()
+    {
+        $this->checkPermission('administration.fractions.edit');
+        $fractions = Fraction::get();
+
+        return view('administration.fractions.index', compact('fractions'));
+    }
+
+    /**
+     * Legt eine neue Fraktion an
+     *
+     * @param  \App\Http\Requests\Administration\Fractions\CreateRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(CreateRequest $request)
+    {
+        Fraction::create([
+            'name' => $request->input('name'),
+            'short_name' => $request->input('short_name'),
+            'discord_webhook' => $request->input('discord_webhook'),
+            'discord_webhook_completed' => $request->input('discord_webhook_completed'),
+            'master' => $request->has('master') ? 1 : 0,
+        ]);
+
+        Alert::addAlert(__('general.erfolgreich_angelegt'), 'success');
+
+        return redirect()->back();
+    }
+
+    /**
+     * Seite zum bearbeiten einer Fraktion
+     *
+     * @param  \Illuminate\Http\Request        $request
+     * @param  \App\Models\Fraction            $fraction
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function edit(Request $request, Fraction $fraction)
+    {
+        $this->checkPermission('administration.fractions.edit');
+
+        return view('administration.fractions.edit', compact('fraction'));
+    }
+
+    /**
+     * Update einer Fraktion
+     *
+     * @param  \App\Http\Requests\Administration\Fractions\CreateRequest $request
+     * @param  \App\Models\Fraction                                      $fraction
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(CreateRequest $request, Fraction $fraction)
+    {
+        $this->checkPermission('administration.fractions.edit');
+
+        $fraction->update([
+            'name' => $request->input('name'),
+            'short_name' => $request->input('short_name'),
+            'discord_webhook' => $request->input('discord_webhook'),
+            'discord_webhook_completed' => $request->input('discord_webhook_completed'),
+            'master' => $request->has('master') ? 1 : 0,
+        ]);
+
+        Alert::addAlert(__('general.erfolgreich_aktualisiert'), 'success');
+
+        return redirect()->route('administration.fractions.index');
+    }
+
+    /**
+     * Löscht eine Fraktion
+     *
+     * @param  \App\Models\Fraction              $fraction
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(Fraction $fraction)
+    {
+        $this->checkPermission('administration.fractions.delete');
+
+        $user_with_fraction_exists = UserFraction::where('fraction_id', $fraction->fraction_id)->exists();
+
+        if ($user_with_fraction_exists) {
+            Alert::addAlert(__('texte.administration.fraktion_nicht_loeschbar', [
+                'name' => $fraction->name,
+            ]), 'danger');
+
+            return redirect()->back();
+        }
+
+        $fraction->delete();
+
+        Alert::addAlert(__('general.erfolgreich_geloescht'), 'success');
+
+        return redirect()->back();
+    }
+}
