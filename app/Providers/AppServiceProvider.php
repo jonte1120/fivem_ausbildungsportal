@@ -68,7 +68,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->registerEvents();
 
-        Gate::before(function (User $user, string $ability, $args) {
+        Gate::before(function (User $user, string $ability, mixed $args = null) {
+            $args = is_array($args) ? $args : [$args];
 
             if (in_array('ignore-superadmin', $args)) {
                 return null;
